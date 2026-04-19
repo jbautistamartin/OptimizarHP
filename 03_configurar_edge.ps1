@@ -1,4 +1,4 @@
-# Configura Microsoft Edge via politicas de grupo (Group Policy registry)
+﻿# Configura Microsoft Edge via politicas de grupo (Group Policy registry)
 # - Pagina de inicio: Google
 # - Nueva pestana: Google
 # - Buscador predeterminado: Google

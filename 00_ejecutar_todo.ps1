@@ -1,4 +1,4 @@
-# Script principal de optimizacion de Windows 11
+﻿# Script principal de optimizacion de Windows 11
 # Ejecuta todos los pasos en orden. Requiere Administrador.
 
 if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
@@ -8,10 +8,15 @@ if (-not ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 
+# ---- Opciones globales ----
+$global:ReiniciarExplorer = $false  # Reinicia el Explorador tras cambios que lo requieran
+
 $pasos = @(
     @{ Numero = "01"; Nombre = "Menu clic derecho clasico";     Archivo = "01_menu_clic_derecho_clasico.ps1" },
     @{ Numero = "02"; Nombre = "Integrar terminales en menu";   Archivo = "02_integrar_terminales.ps1" },
-    @{ Numero = "03"; Nombre = "Configurar Edge";               Archivo = "03_configurar_edge.ps1" }
+    @{ Numero = "03"; Nombre = "Configurar Edge";               Archivo = "03_configurar_edge.ps1" },
+    @{ Numero = "04"; Nombre = "Explorador: ocultos y extensiones"; Archivo = "04_explorador_archivos.ps1" },
+    @{ Numero = "05"; Nombre = "Eliminar bloatware y optimizar servicios"; Archivo = "05_eliminar_bloatware.ps1" }
 )
 
 $errores = @()

@@ -1,4 +1,4 @@
-# Agrega al menú contextual opciones para abrir terminales en carpetas
+﻿# Agrega al menú contextual opciones para abrir terminales en carpetas
 # y ejecutar scripts .ps1 y .cmd como administrador.
 # Requiere ejecutarse como Administrador.
 
