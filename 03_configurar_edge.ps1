@@ -1,6 +1,7 @@
 ﻿# Configura Microsoft Edge via politicas de grupo (Group Policy registry):
 # - Pagina de inicio y de arranque: Google
-# - Nueva pestana: Google (sin feed de noticias de Microsoft)
+# - Nueva pestana: sin feed de noticias ni sitios sugeridos de Microsoft
+#   (no es posible redirigir la nueva pestana a Google por politica en Edge moderno)
 # - Buscador predeterminado: Google
 # - Desactiva sugerencias Bing en la barra de direcciones
 # Requiere ejecutarse como Administrador.
@@ -26,7 +27,8 @@ New-Item -Path $startupUrlsPath -Force | Out-Null
 Set-ItemProperty -Path $startupUrlsPath -Name "1" -Value "https://www.google.com" -Force
 
 # --- Nueva pestana ---
-Set-ItemProperty -Path $policyPath -Name "NewTabPageLocation"            -Value "https://www.google.com" -Force
+# NewTabPageLocation esta ignorado en Edge moderno (Microsoft lo deshabilito).
+# Lo maximo alcanzable por politica es desactivar el feed y los sitios sugeridos.
 Set-ItemProperty -Path $policyPath -Name "NewTabPageContentEnabled"      -Value 0 -Type DWord -Force  # Desactiva el feed de noticias/tiempo de Microsoft
 Set-ItemProperty -Path $policyPath -Name "NewTabPageHideDefaultTopSites" -Value 1 -Type DWord -Force  # Oculta los sitios sugeridos por Microsoft
 

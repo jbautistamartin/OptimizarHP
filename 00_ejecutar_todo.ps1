@@ -18,8 +18,7 @@ $pasos = @(
     @{ Numero = "04"; Nombre = "Explorador: ocultos y extensiones"; Archivo = "04_explorador_archivos.ps1" },
     @{ Numero = "05"; Nombre = "Eliminar bloatware y optimizar servicios"; Archivo = "05_eliminar_bloatware.ps1" },
     @{ Numero = "06"; Nombre = "Privacidad de aplicaciones";              Archivo = "06_privacidad_apps.ps1" },
-    @{ Numero = "07"; Nombre = "Barra de tareas centrada";                Archivo = "07_barra_tareas_centrada.ps1" },
-    @{ Numero = "09"; Nombre = "Energia y rendimiento";                   Archivo = "09_energia_rendimiento.ps1" }
+    @{ Numero = "07"; Nombre = "Energia y rendimiento";                   Archivo = "07_energia_rendimiento.ps1" }
 )
 
 $errores = @()

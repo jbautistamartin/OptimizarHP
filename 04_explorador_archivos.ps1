@@ -2,7 +2,10 @@
 # - Muestra archivos y carpetas ocultos, extensiones y archivos de sistema
 # - Abre "Este equipo" al iniciar el Explorador, con vista compacta
 # - Muestra la ruta completa en la barra de titulo
+# - Centra los iconos de la barra de tareas
+# - Deshabilita el servicio de Widgets (panel del tiempo/noticias) por directiva
 # - Oculta barra de busqueda, Widgets, Chat y Task View de la barra de tareas
+# - Oculta icono "Descubre mas sobre esta imagen" del escritorio
 # - Quita la seccion "Recomendados" del menu Inicio
 # - Muestra segundos en el reloj de la barra de tareas
 # - Oculta OneDrive del panel de navegacion
@@ -29,13 +32,15 @@ $cabinetPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Cabinet
 if (-not (Test-Path $cabinetPath)) { New-Item -Path $cabinetPath -Force | Out-Null }
 Set-ItemProperty -Path $cabinetPath -Name "FullPath" -Value 1 -Type DWord -Force
 
-# --- Barra de tareas ---
+# --- Barra de tareas y escritorio ---
 # Algunas de estas claves pueden estar protegidas en Windows 11 24H2+; se continua si fallan.
 $taskbarProps = @(
+    @{ Name = "TaskbarAl";                Value = 1; Desc = "Centrar iconos de la barra de tareas" },
     @{ Name = "TaskbarDa";                Value = 0; Desc = "Ocultar boton Widgets" },
     @{ Name = "TaskbarMn";                Value = 0; Desc = "Ocultar boton Chat (Teams)" },
     @{ Name = "ShowTaskViewButton";       Value = 0; Desc = "Ocultar boton Task View" },
-    @{ Name = "ShowSecondsInSystemClock"; Value = 1; Desc = "Mostrar segundos en el reloj" }
+    @{ Name = "ShowSecondsInSystemClock"; Value = 1; Desc = "Mostrar segundos en el reloj" },
+    @{ Name = "ShowSpotlightDesktop";     Value = 0; Desc = "Ocultar icono 'Descubre mas sobre esta imagen'" }
 )
 foreach ($prop in $taskbarProps) {
     try {
@@ -52,6 +57,12 @@ try {
 } catch {
     Write-Warning "No se pudo ocultar la barra de busqueda: $_"
 }
+
+# Deshabilitar completamente el servicio de Widgets (panel del tiempo/noticias)
+# AllowNewsAndInterests=0 via Group Policy impide que el proceso arranque
+$dshPath = "HKLM:\SOFTWARE\Policies\Microsoft\Dsh"
+if (-not (Test-Path $dshPath)) { New-Item -Path $dshPath -Force | Out-Null }
+Set-ItemProperty -Path $dshPath -Name "AllowNewsAndInterests" -Value 0 -Type DWord -Force
 
 # --- Menu Inicio ---
 # Quitar seccion "Recomendados" (archivos recientes) del menu Inicio (Windows 11 23H2+)
