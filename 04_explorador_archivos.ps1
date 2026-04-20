@@ -64,6 +64,12 @@ $dshPath = "HKLM:\SOFTWARE\Policies\Microsoft\Dsh"
 if (-not (Test-Path $dshPath)) { New-Item -Path $dshPath -Force | Out-Null }
 Set-ItemProperty -Path $dshPath -Name "AllowNewsAndInterests" -Value 0 -Type DWord -Force
 
+# Deshabilitar "Descubre mas sobre esta imagen" del escritorio via Group Policy
+# DisableWindowsSpotlightOnDesktop evita que Windows reactive el enlace aunque la clave HKCU se restablezca
+$cloudContentPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
+if (-not (Test-Path $cloudContentPath)) { New-Item -Path $cloudContentPath -Force | Out-Null }
+Set-ItemProperty -Path $cloudContentPath -Name "DisableWindowsSpotlightOnDesktop" -Value 1 -Type DWord -Force
+
 # --- Menu Inicio ---
 # Quitar seccion "Recomendados" (archivos recientes) del menu Inicio (Windows 11 23H2+)
 $explorerPolicyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
@@ -77,7 +83,9 @@ $regOneDrive = "HKCU:\Software\Classes\CLSID\$clsidOneDrive"
 if (-not (Test-Path $regOneDrive)) { New-Item -Path $regOneDrive -Force | Out-Null }
 Set-ItemProperty -Path $regOneDrive -Name "System.IsPinnedToNamespaceTree" -Value 0 -Type DWord -Force
 
-# --- Elementos anclados (seccion Anclados / Acceso rapido) ---
+# --- Elementos anclados (seccion Anclados / Acceso rapido / Inicio) ---
+# Se enumeran los items dentro del panel Inicio y se invoca el verbo sobre ellos en ese contexto,
+# porque InvokeVerb("unpinfromhome") solo esta disponible cuando el item se resuelve desde ese panel.
 $shell = New-Object -ComObject Shell.Application
 $carpetasQuitar = @(
     [System.Environment]::GetFolderPath("Desktop"),
@@ -85,14 +93,30 @@ $carpetasQuitar = @(
     [System.Environment]::GetFolderPath("MyMusic"),
     [System.Environment]::GetFolderPath("MyVideos")
 )
-foreach ($carpeta in $carpetasQuitar) {
-    $ns = $shell.Namespace($carpeta)
-    if ($ns) { $ns.Self.InvokeVerb("unpinfromhome") }
+
+try {
+    # CLSID del panel Quick Access / Inicio (Windows 10/11)
+    $homeNS = $shell.Namespace("shell:::{679f85cb-0220-4080-b29b-5540cc05aab6}")
+    if ($homeNS) {
+        foreach ($item in @($homeNS.Items())) {
+            $esCarpetaRuta    = $item.IsFolder -and ($carpetasQuitar -contains $item.Path)
+            $esGaleria        = $item.IsFolder -and ($item.Name -in @("Galería", "Gallery"))
+            if ($esCarpetaRuta -or $esGaleria) {
+                $item.InvokeVerb("unpinfromhome")
+            }
+        }
+    }
+} catch {
+    Write-Warning "No se pudieron desanclar carpetas del panel Inicio: $_"
 }
 
 # Anclar carpeta personal del usuario actual
-$carpetaUsuario = [System.Environment]::GetFolderPath("UserProfile")
-$shell.Namespace($carpetaUsuario).Self.InvokeVerb("pintohome")
+try {
+    $carpetaUsuario = [System.Environment]::GetFolderPath("UserProfile")
+    $shell.Namespace($carpetaUsuario).Self.InvokeVerb("pintohome")
+} catch {
+    Write-Warning "No se pudo anclar la carpeta personal: $_"
+}
 
 Write-Host "Explorador configurado correctamente."
 
