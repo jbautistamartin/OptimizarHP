@@ -16,7 +16,9 @@ $pasos = @(
     @{ Numero = "02"; Nombre = "Integrar terminales en menu";   Archivo = "02_integrar_terminales.ps1" },
     @{ Numero = "03"; Nombre = "Configurar Edge";               Archivo = "03_configurar_edge.ps1" },
     @{ Numero = "04"; Nombre = "Explorador: ocultos y extensiones"; Archivo = "04_explorador_archivos.ps1" },
-    @{ Numero = "05"; Nombre = "Eliminar bloatware y optimizar servicios"; Archivo = "05_eliminar_bloatware.ps1" }
+    @{ Numero = "05"; Nombre = "Eliminar bloatware y optimizar servicios"; Archivo = "05_eliminar_bloatware.ps1" },
+    @{ Numero = "06"; Nombre = "Privacidad de aplicaciones";              Archivo = "06_privacidad_apps.ps1" },
+    @{ Numero = "09"; Nombre = "Energia y rendimiento";                   Archivo = "09_energia_rendimiento.ps1" }
 )
 
 $errores = @()
