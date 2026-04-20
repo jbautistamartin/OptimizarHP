@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(powershell.exe:*)",
-      "Bash(powershell:*)"
+      "Bash(powershell:*)",
+      "Bash(ls *.ps1)"
     ]
   }
 }

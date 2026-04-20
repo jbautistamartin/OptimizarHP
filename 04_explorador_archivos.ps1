@@ -3,7 +3,6 @@
 # - Abre "Este equipo" al iniciar el Explorador, con vista compacta
 # - Muestra la ruta completa en la barra de titulo
 # - Oculta barra de busqueda, Widgets, Chat y Task View de la barra de tareas
-# - Alinea el menu Inicio a la izquierda
 # - Quita la seccion "Recomendados" del menu Inicio
 # - Muestra segundos en el reloj de la barra de tareas
 # - Oculta OneDrive del panel de navegacion
@@ -31,15 +30,28 @@ if (-not (Test-Path $cabinetPath)) { New-Item -Path $cabinetPath -Force | Out-Nu
 Set-ItemProperty -Path $cabinetPath -Name "FullPath" -Value 1 -Type DWord -Force
 
 # --- Barra de tareas ---
-Set-ItemProperty -Path $explorerPath -Name "TaskbarDa"                -Value 0 -Type DWord -Force  # Ocultar boton Widgets
-Set-ItemProperty -Path $explorerPath -Name "TaskbarMn"                -Value 0 -Type DWord -Force  # Ocultar boton Chat (Teams)
-Set-ItemProperty -Path $explorerPath -Name "ShowTaskViewButton"       -Value 0 -Type DWord -Force  # Ocultar boton Task View
-Set-ItemProperty -Path $explorerPath -Name "TaskbarAl"                -Value 0 -Type DWord -Force  # Menu Inicio a la izquierda (0=izq, 1=centro)
-Set-ItemProperty -Path $explorerPath -Name "ShowSecondsInSystemClock" -Value 1 -Type DWord -Force  # Mostrar segundos en el reloj
+# Algunas de estas claves pueden estar protegidas en Windows 11 24H2+; se continua si fallan.
+$taskbarProps = @(
+    @{ Name = "TaskbarDa";                Value = 0; Desc = "Ocultar boton Widgets" },
+    @{ Name = "TaskbarMn";                Value = 0; Desc = "Ocultar boton Chat (Teams)" },
+    @{ Name = "ShowTaskViewButton";       Value = 0; Desc = "Ocultar boton Task View" },
+    @{ Name = "ShowSecondsInSystemClock"; Value = 1; Desc = "Mostrar segundos en el reloj" }
+)
+foreach ($prop in $taskbarProps) {
+    try {
+        Set-ItemProperty -Path $explorerPath -Name $prop.Name -Value $prop.Value -Type DWord -Force -ErrorAction Stop
+    } catch {
+        Write-Warning "No se pudo aplicar '$($prop.Desc)': $_"
+    }
+}
 
 # Ocultar barra de busqueda de la barra de tareas (0=oculto, 1=icono, 2=caja completa)
-Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" `
-    -Name "SearchboxTaskbarMode" -Value 0 -Type DWord -Force
+try {
+    Set-ItemProperty -Path "HKCU:\Software\Microsoft\Windows\CurrentVersion\Search" `
+        -Name "SearchboxTaskbarMode" -Value 0 -Type DWord -Force -ErrorAction Stop
+} catch {
+    Write-Warning "No se pudo ocultar la barra de busqueda: $_"
+}
 
 # --- Menu Inicio ---
 # Quitar seccion "Recomendados" (archivos recientes) del menu Inicio (Windows 11 23H2+)

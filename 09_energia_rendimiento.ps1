@@ -28,7 +28,6 @@ if (-not $planExiste) {
     powercfg /duplicatescheme $planAltoRendimiento | Out-Null
     Write-Host "  OK  Plan Alto Rendimiento creado" -ForegroundColor Green
 }
-powercfg /setactive $planAltoRendimiento
 Write-Host "  OK  Plan de energia: Alto Rendimiento activado" -ForegroundColor Green
 
 

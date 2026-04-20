@@ -74,6 +74,9 @@ $appsEliminar = @(
 Write-Host ""
 Write-Host "[1/7] Desinstalando apps..." -ForegroundColor Cyan
 
+# Obtenemos todos los paquetes provisionados de una sola vez para no repetir la consulta en cada iteracion
+$provisionados = Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue
+
 foreach ($app in $appsEliminar) {
     $paquete = Get-AppxPackage -Name $app -AllUsers -ErrorAction SilentlyContinue
     if ($paquete) {
@@ -88,8 +91,7 @@ foreach ($app in $appsEliminar) {
     }
 
     # Evita que Windows vuelva a instalarla en nuevos usuarios
-    $provision = Get-AppxProvisionedPackage -Online -ErrorAction SilentlyContinue |
-                 Where-Object { $_.DisplayName -eq $app }
+    $provision = $provisionados | Where-Object { $_.DisplayName -eq $app }
     if ($provision) {
         Remove-AppxProvisionedPackage -Online -PackageName $provision.PackageName -ErrorAction SilentlyContinue | Out-Null
     }
