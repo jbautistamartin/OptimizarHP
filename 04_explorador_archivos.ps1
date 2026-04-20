@@ -4,7 +4,7 @@
 # - Muestra la ruta completa en la barra de titulo
 # - Centra los iconos de la barra de tareas
 # - Deshabilita el servicio de Widgets (panel del tiempo/noticias) por directiva
-# - Oculta barra de busqueda, Widgets, Chat y Task View de la barra de tareas
+# - Oculta barra de busqueda, Widgets y Chat de la barra de tareas
 # - Oculta icono "Descubre mas sobre esta imagen" del escritorio
 # - Quita la seccion "Recomendados" del menu Inicio
 # - Muestra segundos en el reloj de la barra de tareas
@@ -38,7 +38,6 @@ $taskbarProps = @(
     @{ Name = "TaskbarAl";                Value = 1; Desc = "Centrar iconos de la barra de tareas" },
     @{ Name = "TaskbarDa";                Value = 0; Desc = "Ocultar boton Widgets" },
     @{ Name = "TaskbarMn";                Value = 0; Desc = "Ocultar boton Chat (Teams)" },
-    @{ Name = "ShowTaskViewButton";       Value = 0; Desc = "Ocultar boton Task View" },
     @{ Name = "ShowSecondsInSystemClock"; Value = 1; Desc = "Mostrar segundos en el reloj" },
     @{ Name = "ShowSpotlightDesktop";     Value = 0; Desc = "Ocultar icono 'Descubre mas sobre esta imagen'" }
 )

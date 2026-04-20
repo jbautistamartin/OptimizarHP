@@ -127,6 +127,12 @@ $servicios = @(
 Write-Host ""
 Write-Host "[2/7] Deshabilitando servicios..." -ForegroundColor Cyan
 
+# En modo Empresarial se conservan busqueda, indexacion y biometria
+$serviciosExcluirEmpresarial = @("WSearch", "WbioSrvc", "Spooler", "lfsvc")
+if ($global:Modo -eq "Empresarial") {
+    $servicios = $servicios | Where-Object { $_.Nombre -notin $serviciosExcluirEmpresarial }
+}
+
 foreach ($svc in $servicios) {
     $servicio = Get-Service -Name $svc.Nombre -ErrorAction SilentlyContinue
     if ($servicio) {

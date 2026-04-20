@@ -45,7 +45,7 @@ powercfg /setdcvalueindex $planAltoRendimiento $subgrupoDisco $ajusteDiscoPowerO
 Write-Host "  OK  Apagado de disco duro por inactividad desactivado" -ForegroundColor Green
 
 
-# Aplicar todos los cambios al plan activo
+# Aplicar plan activo
 powercfg /setactive $planAltoRendimiento
 
 
