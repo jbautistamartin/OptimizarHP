@@ -69,6 +69,13 @@ $cloudContentPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\CloudContent"
 if (-not (Test-Path $cloudContentPath)) { New-Item -Path $cloudContentPath -Force | Out-Null }
 Set-ItemProperty -Path $cloudContentPath -Name "DisableWindowsSpotlightOnDesktop" -Value 1 -Type DWord -Force
 
+# Ocultar icono Spotlight del escritorio via HideDesktopIcons
+# Este GUID registra el icono como objeto de escritorio; ponerlo a 1 lo oculta igual que la Papelera o "Este equipo"
+$spotlightGuid   = "{2cc5ca98-6485-489a-920e-b3e88a6ccce3}"
+$hideIconsPath   = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\HideDesktopIcons\NewStartPanel"
+if (-not (Test-Path $hideIconsPath)) { New-Item -Path $hideIconsPath -Force | Out-Null }
+Set-ItemProperty -Path $hideIconsPath -Name $spotlightGuid -Value 1 -Type DWord -Force
+
 # --- Menu Inicio ---
 # Quitar seccion "Recomendados" (archivos recientes) del menu Inicio (Windows 11 23H2+)
 $explorerPolicyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Windows\Explorer"
