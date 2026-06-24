@@ -24,7 +24,8 @@ $explorerPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanc
 Set-ItemProperty -Path $explorerPath -Name "Hidden"               -Value 1 -Type DWord -Force  # Mostrar ocultos
 Set-ItemProperty -Path $explorerPath -Name "HideFileExt"          -Value 0 -Type DWord -Force  # Mostrar extensiones
 Set-ItemProperty -Path $explorerPath -Name "ShowSuperHidden"      -Value 1 -Type DWord -Force  # Mostrar archivos de sistema
-Set-ItemProperty -Path $explorerPath -Name "LaunchTo"             -Value 1 -Type DWord -Force  # Abrir "Este equipo" en vez de Inicio
+#Set-ItemProperty -Path $explorerPath -Name "LaunchTo"             -Value 1 -Type DWord -Force  # Abrir "Este equipo" en vez de Inicio
+Set-ItemProperty -Path $explorerPath -Name "LaunchTo"             -Value 2 -Type DWord -Force  # Abrir "Inicio".
 Set-ItemProperty -Path $explorerPath -Name "UseCompactMode"       -Value 1 -Type DWord -Force  # Vista compacta: menos espacio entre elementos
 
 # Ruta completa en la barra de titulo del Explorador
@@ -131,4 +132,27 @@ if ($global:ReiniciarExplorer) {
     Write-Host "Explorador reiniciado."
 } else {
     Write-Host "Reinicia el Explorador manualmente para aplicar el cambio."
+}
+
+# >>> NUEVO: Eliminar "Abrir en terminal" del menú contextual del Explorador
+try {
+    $blockedPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Shell Extensions\Blocked"
+    if (-not (Test-Path $blockedPath)) { New-Item -Path $blockedPath -Force | Out-Null }
+
+    $terminalCLSID = "{9F156763-7844-4DC4-B2B1-901F640F5155}"
+    New-ItemProperty -Path $blockedPath -Name $terminalCLSID -Value "" -PropertyType String -Force | Out-Null
+} catch {
+    Write-Warning "No se pudo quitar 'Abrir en terminal': $_"
+}
+
+# >>> NUEVO: Agregar "Finalizar tarea" en la barra de tareas
+try {
+    $taskbarDevPath = "HKCU:\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced\TaskbarDeveloperSettings"
+    if (-not (Test-Path $taskbarDevPath)) {
+        New-Item -Path $taskbarDevPath -Force | Out-Null
+    }
+
+    Set-ItemProperty -Path $taskbarDevPath -Name "TaskbarEndTask" -Value 1 -Type DWord -Force
+} catch {
+    Write-Warning "No se pudo habilitar 'Finalizar tarea': $_"
 }
